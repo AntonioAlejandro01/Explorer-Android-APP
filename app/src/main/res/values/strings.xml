@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ExplorerApp</string>
+    <string name="creator">Creator</string>
+    <string name="marcar">Marcar</string>
+    <string name="template_ruta_numnber">%1$d de %2$d</string>
+    <string name="recomendation">Recomendation</string>
 </resources>
