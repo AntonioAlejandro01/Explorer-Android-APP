@@ -4,4 +4,7 @@
     <string name="marcar">Marcar</string>
     <string name="template_ruta_numnber">%1$d de %2$d</string>
     <string name="recomendation">Recomendation</string>
+    <string name="description_image">Icon to center your position</string>
+    <string name="sin_ruta">щ(ʘ╻ʘ)щ\</string>
+    <string name="qr_not_valid">QR no valido!</string>
 </resources>

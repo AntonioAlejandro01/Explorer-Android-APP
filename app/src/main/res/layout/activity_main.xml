@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glHorizontal"
         android:layout_width="0dp"
@@ -18,13 +17,20 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85"/>
+        app:layout_constraintGuide_percent="0.18"/>
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glHorizontal3"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glHorizontal4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.90"/>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glVertical1"
@@ -46,6 +52,13 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.70"/>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glVertical4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85"/>
+
     <!-- MAP -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,7 +75,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glHorizontal3"
+        app:layout_constraintTop_toBottomOf="@id/glHorizontal4"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/glVertical1"
         android:layout_margin="2sp"
@@ -70,8 +83,52 @@
         android:onClick="onClickCreator"
         />
 
+    <ImageButton
+        android:id="@+id/ibLocation"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintRight_toLeftOf="@id/glVertical4"
+        app:layout_constraintLeft_toRightOf="@id/glVertical3"
+        app:layout_constraintTop_toBottomOf="@id/glHorizontal"
+        app:layout_constraintBottom_toTopOf="@id/glHorizontal2"
+        android:src="@drawable/ic_my_location_focus"
+        android:background="@color/transparent"
+        android:contentDescription="@string/description_image"
+        android:scaleType="fitCenter"
+        android:padding="13sp"
+        android:onClick="onClickFocus"
+        />
+
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@id/glVertical4"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/glHorizontal"
+        app:layout_constraintBottom_toTopOf="@id/glHorizontal2"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_info"
+        android:scaleType="fitCenter"
+        android:padding="12sp"
+        android:onClick="onClickShowInfo"/>
+
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/glHorizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/glVertical1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:src="@drawable/ic_qrcode"
+        android:background="@color/transparent"
+        android:scaleType="fitCenter"
+        android:padding="10sp"
+        android:onClick="onClickReadRuta"
+        />
+
+
     <TextView
-        android:id="@+id/tvNumberRuta"
+        android:id="@+id/tvNumberPlace"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:text="@string/template_ruta_numnber"
@@ -84,11 +141,12 @@
         android:elevation="4dp"/>
 
     <TextView
+        android:id="@+id/tvRecomendation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@id/glVertical2"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/glHorizontal2"
+        app:layout_constraintBottom_toTopOf="@id/glHorizontal3"
         android:text="@string/recomendation"
         android:textAlignment="center"
         android:textSize="12sp"
@@ -96,19 +154,19 @@
         android:elevation="4dp"
         />
     <LinearLayout
-        android:id="@+id/llRandomRuta"
+        android:id="@+id/llRandomPlace"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glHorizontal2"
+        app:layout_constraintTop_toBottomOf="@id/glHorizontal3"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/glVertical2"
         android:elevation="4dp"
         >
 
         <TextView
-            android:id="@+id/tvTitleRuta"
+            android:id="@+id/tvTitlePlace"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
@@ -117,7 +175,7 @@
             android:textSize="18sp"
             />
         <TextView
-            android:id="@+id/tvCommentRuta"
+            android:id="@+id/tvCommentPlace"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
