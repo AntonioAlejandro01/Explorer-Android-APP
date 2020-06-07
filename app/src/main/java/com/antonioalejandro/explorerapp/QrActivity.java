@@ -1,13 +1,10 @@
 package com.antonioalejandro.explorerapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -21,7 +18,6 @@ import java.util.Arrays;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-
 public class QrActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
     private ZXingScannerView mScannerView;
@@ -30,16 +26,16 @@ public class QrActivity extends AppCompatActivity implements ZXingScannerView.Re
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
+        mScannerView = new ZXingScannerView(this);
         mScannerView.setFormats(Arrays.asList(BarcodeFormat.QR_CODE));
-        setContentView(mScannerView);                // Set the scanner view as the content view
+        setContentView(mScannerView);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
+        mScannerView.setResultHandler(this);
+        mScannerView.startCamera();
     }
 
     @Override
@@ -50,9 +46,8 @@ public class QrActivity extends AppCompatActivity implements ZXingScannerView.Re
 
     @Override
     public void handleResult(Result rawResult) {
-        // Do something with the result here
-        Log.v("TAG", rawResult.getText()); // Prints scan results
-        Log.v("TAG", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+        Log.v("TAG", rawResult.getText());
+        Log.v("TAG", rawResult.getBarcodeFormat().toString());
         try {
             ExplorerDB.getInstance(this).insertRuta(parseJsonToRuta(rawResult.getText()));
             this.setResult(RESULT_OK);

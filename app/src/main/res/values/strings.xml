@@ -13,4 +13,9 @@
     <string name="dialog_neutral_button">Visited</string>
     <string name="msg_invalid_ruta">Haven\'t any route</string>
     <string name="template_info">Title: %1$s \nAuthor: %2$s \nLocation: %3$s \nTopic: %4$s \nProgress: %5$s</string>
+    <string name="Error">The APP needed all permissions.The data only be in the phone.Don\'t be sent to anywhere</string>
+    <string name="url">"http://192.168.0.18:4200/"</string>
+    <string name="custom_dialog_title">Route Completed</string>
+    <string name="custom_dialog_button">FINISH</string>
+
 </resources>

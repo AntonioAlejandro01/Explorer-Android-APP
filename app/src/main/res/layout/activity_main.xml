@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+                                        <!-- GuideLines -->
+
+                        <!-- Horizontal -->
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glHorizontal"
@@ -31,6 +34,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.85"/>
 
+                        <!-- Vertical -->
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glVertical1"
@@ -58,8 +62,8 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.85"/>
-
-    <!-- MAP -->
+                                    <!-- Items -->
+                    <!-- MAP -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -68,7 +72,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
-
+                    <!-- Buttons -->
+    <!-- if click go to Web page -->
     <ImageButton
         android:id="@+id/btnCreator"
         android:text="@string/creator"
@@ -85,7 +90,7 @@
         android:background="@color/transparent"
 
         />
-
+    <!-- Center your posisiton in map -->
     <ImageButton
         android:id="@+id/ibLocation"
         android:layout_width="0dp"
@@ -101,7 +106,7 @@
         android:padding="13sp"
         android:onClick="onClickFocus"
         />
-
+    <!-- Info de la ruta -->
     <ImageButton
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -114,7 +119,7 @@
         android:scaleType="fitCenter"
         android:padding="12sp"
         android:onClick="onClickShowInfo"/>
-
+    <!-- Open scanner to read a ruta -->
     <ImageButton
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -128,8 +133,8 @@
         android:padding="10sp"
         android:onClick="onClickReadRuta"
         />
-
-
+                        <!-- Textviews -->
+    <!-- Progreso de la ruta  -->
     <TextView
         android:id="@+id/tvNumberPlace"
         android:layout_width="0dp"
@@ -142,7 +147,8 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/glVertical3"
         android:elevation="4dp"/>
-
+                    <!-- Recomnedation -->
+    <!-- Textview Title -->
     <TextView
         android:id="@+id/tvRecomendation"
         android:layout_width="0dp"
@@ -156,6 +162,7 @@
         android:textColor="@color/colorRecomendation"
         android:elevation="4dp"
         />
+                        <!-- Linear with name,comment and button to go -->
     <LinearLayout
         android:id="@+id/llRandomPlace"
         android:layout_width="0dp"
@@ -186,6 +193,7 @@
             android:textAlignment="center"
             android:gravity="center"
             />
+        <!-- to center map in recomendation place -->
         <ImageButton
             android:id="@+id/btnMarcar"
             android:layout_width="match_parent"

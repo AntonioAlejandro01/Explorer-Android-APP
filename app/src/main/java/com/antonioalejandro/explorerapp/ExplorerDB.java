@@ -39,6 +39,7 @@ public class ExplorerDB extends SQLiteOpenHelper {
 
     }
 
+
     public Optional<Ruta> getRuta(int id){
         Cursor cursor = db.rawQuery("SELECT _id,title,author,location,topic FROM Ruta " + ( id == -1 ? "order by _id DESC LIMIT 1": ("WHERE _id=" + id)),null);
         Ruta ruta = null;

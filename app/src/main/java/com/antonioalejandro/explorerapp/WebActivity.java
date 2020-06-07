@@ -1,9 +1,9 @@
 package com.antonioalejandro.explorerapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.webkit.WebView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class WebActivity extends AppCompatActivity {
 
@@ -13,6 +13,6 @@ public class WebActivity extends AppCompatActivity {
         setContentView(R.layout.activity_web);
         WebView myWebView = findViewById(R.id.webView);
         myWebView.getSettings().setJavaScriptEnabled(true);
-        myWebView.loadUrl("http://192.168.0.18:4200/");
+        myWebView.loadUrl(getString(R.string.url));
     }
 }
