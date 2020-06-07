@@ -7,4 +7,10 @@
     <string name="description_image">Icon to center your position</string>
     <string name="sin_ruta">щ(ʘ╻ʘ)щ\</string>
     <string name="qr_not_valid">QR no valido!</string>
+    <string name="title_dialog">Info</string>
+    <string name="dialog_positive_button">Ok</string>
+    <string name="dialog_negative_button">Close</string>
+    <string name="dialog_neutral_button">Visited</string>
+    <string name="msg_invalid_ruta">Haven\'t any route</string>
+    <string name="template_info">Title: %1$s \nAuthor: %2$s \nLocation: %3$s \nTopic: %4$s \nProgress: %5$s</string>
 </resources>

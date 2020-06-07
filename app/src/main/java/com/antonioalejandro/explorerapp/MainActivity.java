@@ -2,6 +2,7 @@ package com.antonioalejandro.explorerapp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -9,21 +10,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.Image;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -33,9 +33,7 @@ import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private final String KEY_PREFERENCES_ID_RUTA = "key_prefenreces_id_ruta";
 
     private final int REQUEST_CODE_QR = 1;
+    //inflater
+    private LayoutInflater inflater;
     // views
         // map
     private MapView map = null;
@@ -88,11 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
         llRandomPlace.setOnLongClickListener(view -> {
             Collections.shuffle(ruta.getPlaces());
-            randomPlace = ruta.getPlaces().get(0);
+            ruta.getPlaces().stream().filter(item -> !item.isVisited()).findFirst().ifPresent(place -> this.randomPlace = place);
             tvTitlePlace.setText(randomPlace.getNombre());
             tvCommentPlace.setText(randomPlace.getComentario());
             return false;
         });
+        // inflater
+        inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Geo permissions
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -113,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location loca) {
                 location = loca;
-                setPlayerMarker(new GeoPoint(loca.getLatitude(),loca.getLongitude()));
+                setMarkers(new GeoPoint(loca.getLatitude(),loca.getLongitude()));
                 Log.d(TAG, "onLocationChanged: Location was updated");
             }
 
@@ -136,34 +138,48 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(NAME_PREFERENCES,Context.MODE_PRIVATE);
         final int id = prefs.getInt(KEY_PREFERENCES_ID_RUTA,-1);
         if(id == -1){ // no hay ninguna ruta
-           tvNumberPlace.setText(R.string.sin_ruta);
-           llRandomPlace.setVisibility(View.GONE);
-           tvRecomendation.setVisibility(View.GONE);
-           this.ruta = new Ruta();
-           ruta.setPlaces(new ArrayList<>());
+            try{
+                initializeRoute(ExplorerDB.getInstance(this).getRuta(-1).orElse(new Ruta()));
+            }catch (Exception e) {
+                Log.e(TAG, "onCreate: ",e);
+                tvNumberPlace.setText(R.string.sin_ruta);
+                llRandomPlace.setVisibility(View.GONE);
+                tvRecomendation.setVisibility(View.GONE);
+
+            };
         }
         else{ // llamar a la base de datos
             // obtiene la ruta guardada en la base de datos con el id guardado el las prefs de antes de cerra la aplicacion la ultima vez. si no intenta buscar la ultima y en ultimo caso crea una vacia
             this.ruta = ExplorerDB.getInstance(this).getRuta(id).orElseGet(() ->  ExplorerDB.getInstance(this).getRuta(-1).orElse(new Ruta()));
-            tvNumberPlace.setText(getString(R.string.template_ruta_numnber,(int)ruta.getProgress(),ruta.getPlaces().size()));
-            Collections.shuffle(ruta.getPlaces());
-            randomPlace = ruta.getPlaces().get(0);
-            tvTitlePlace.setText(randomPlace.getNombre());
-            tvCommentPlace.setText(randomPlace.getComentario());
+            if (this.ruta.getPlaces().size() != 0) {
+                tvNumberPlace.setText(getString(R.string.template_ruta_numnber, (int) ruta.getProgress(), ruta.getPlaces().size()));
+                Collections.shuffle(ruta.getPlaces());
+                randomPlace = ruta.getPlaces().get(0);
+                tvTitlePlace.setText(randomPlace.getNombre());
+                tvCommentPlace.setText(randomPlace.getComentario());
+            }
+            else{
+                tvNumberPlace.setText(R.string.sin_ruta);
+                llRandomPlace.setVisibility(View.GONE);
+                tvRecomendation.setVisibility(View.GONE);
+            }
         }
         // init position in map
         GeoPoint player = new GeoPoint(location.getLatitude(), location.getLongitude());
-        setPlayerMarker(player);
+        setMarkers(player);
 
         map.getController().setCenter(player);
         map.getController().setZoom(ZOOM_LEVEL);
-        focus = false;
-
-        ExplorerDB.getInstance(this).getRutas().ifPresent(list -> list.forEach(item -> Log.d("XXX",item.getTitle() + " " + item.getId() + "" + item.getPlaces().size())));
+        focus = true;
+        map.setOnTouchListener((v, event) -> {
+            if (focus) onClickFocus(new View(this));
+            return false;
+        });
     }
 
 
     public void onClickMarcar(View view) {
+        if (focus) onClickFocus(view);
         map.getController().animateTo(new GeoPoint(randomPlace.getCoordenadas().getLatitud(),randomPlace.getCoordenadas().getLongitud()));
     }
 
@@ -171,7 +187,41 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this,WebActivity.class));
     }
 
+
     public void onClickShowInfo(View view) {
+        if (ruta.getPlaces().size() == 0){
+            new AlertDialog.Builder(this).
+                    setTitle(R.string.title_dialog).
+                    setCancelable(true).
+                    setNegativeButton(R.string.dialog_negative_button,(dialog, which) -> {dialog.dismiss();}).
+                    setMessage(R.string.msg_invalid_ruta).
+                    setIcon(R.drawable.ic_info_outline).
+                    create().
+                    show();
+        }
+        else {
+            new AlertDialog.
+                    Builder(this).
+                    setTitle(R.string.title_dialog).
+                    setPositiveButton(R.string.dialog_positive_button, (dialog, which) -> dialog.cancel()).
+                    setMessage(
+                            getString(
+                                    R.string.template_info,
+                                    ruta.getTitle(),
+                                    ruta.getAuthor(),
+                                    ruta.getLocation(),
+                                    ruta.getTopic(),
+                                    getString(
+                                            R.string.template_ruta_numnber,
+                                            ruta.getProgress(),
+                                            ruta.getPlaces().size()
+                                    )
+                            )
+                    ).
+                    setIcon(R.drawable.ic_info_outline).
+                    create().
+                    show();
+        }
     }
 
     public void onClickReadRuta(View view) {
@@ -179,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent,REQUEST_CODE_QR);
     }
 
-    private void setPlayerMarker(GeoPoint playerPosition){
+    private void setMarkers(GeoPoint playerPosition){
         Marker player = new Marker(map);
-        player.setIcon(getDrawable(R.drawable.ic_my_location));
+        player.setIcon(getDrawable(R.drawable.ic_my_location_focus_enabled));
         player.setPosition(playerPosition);
         player.setOnMarkerClickListener((x,y)->{
             map.getController().animateTo(playerPosition);
@@ -193,11 +243,11 @@ public class MainActivity extends AppCompatActivity {
             map.getController().setCenter(playerPosition);
         }
         Log.d(TAG, "setPlayerMarker: " + ruta);
-        setMarkersToMap(ruta.getPlaces());
+        setMarkersPlacesToMap(ruta.getPlaces());
         map.getOverlays().add(player);
     }
 
-    private void setMarkersToMap(List<Place> places) {
+    private void setMarkersPlacesToMap(List<Place> places) {
         map.getOverlays().clear();
         places.forEach(this::addMarker);
     }
@@ -209,27 +259,76 @@ public class MainActivity extends AppCompatActivity {
         marker.setTitle(place.getNombre());
         marker.setIcon(getDrawable(place.isVisited() ? R.drawable.ic_marker_visited:R.drawable.ic_marker ));
         marker.setSubDescription(place.getComentario());
+        marker.setOnMarkerClickListener((marker1, mapView) -> {
+            new AlertDialog.Builder(this).
+                    setIcon(R.drawable.ic_marker).
+                    setTitle(place.getNombre()).
+                    setMessage(place.getComentario()).
+                    setNeutralButton(R.string.dialog_neutral_button,(dialog, which) -> {checkPlaceAsVisisted(place);}).
+                    setNegativeButton(R.string.dialog_negative_button,(dialog, which) -> dialog.cancel()).
+                    setPositiveButton(R.string.dialog_positive_button,(dialog, which) -> dialog.dismiss()).
+                    setCancelable(true).
+                    create().
+                    show();
+            return false;
+        });
         map.getOverlays().add(marker);
     }
 
     public void onClickFocus(View view) {
+        focus = !focus;
        if (focus){
            map.getController().animateTo(new GeoPoint(location.getLatitude(),location.getLongitude()));
        }
        ibLocation.setImageResource(focus ? R.drawable.ic_my_location: R.drawable.ic_my_location_focus);
-       focus = !focus;
+
     }
 
-    public void initializeRoute(Ruta ruta){
+    public void initializeRoute(Ruta ruta) throws NullPointerException {
         this.ruta = ruta;
+        if (ruta.getPlaces().size() == 0){
+            throw new NullPointerException("Without places");
+        }
         tvNumberPlace.setText(getString(R.string.template_ruta_numnber,(int)ruta.getProgress(),ruta.getPlaces().size()));
         Collections.shuffle(ruta.getPlaces());
         this.randomPlace = ruta.getPlaces().get(0);
+        setMarkers(new GeoPoint(location.getLatitude(), location.getLongitude()));
         tvTitlePlace.setText(randomPlace.getNombre());
         tvCommentPlace.setText(randomPlace.getComentario());
         llRandomPlace.setVisibility(View.VISIBLE);
-        tvRecomendation.setVisibility(View.GONE);
+        tvRecomendation.setVisibility(View.VISIBLE);
     }
+
+    public void checkPlaceAsVisisted(Place place) {
+        place.setVisited(true);
+        map.getOverlayManager().clear();
+        setMarkers(new GeoPoint(location.getLatitude(),location.getLongitude()));
+        tvNumberPlace.setText(getString(R.string.template_ruta_numnber,ruta.getProgress(),ruta.getPlaces().size()));
+        ExplorerDB.getInstance(this).updatePlaceVisited(place);
+        if (ruta.getProgress() == ruta.getPlaces().size()) {
+            RelativeLayout relativeLayout = (RelativeLayout)inflater.inflate(R.layout.ruta_terminada,null);
+            AlertDialog dialog = new AlertDialog.Builder(this).setView(relativeLayout).create();
+            relativeLayout.findViewById(R.id.btnFinish).setOnClickListener(v -> {
+                ExplorerDB.getInstance(this).borrarRutasCompletadas();
+                try {
+                    initializeRoute(ExplorerDB.getInstance(this).getRuta(-1).orElse(new Ruta()));
+                } catch (NullPointerException e) {
+                    tvNumberPlace.setText(R.string.sin_ruta);
+                    llRandomPlace.setVisibility(View.GONE);
+                    tvRecomendation.setVisibility(View.GONE);
+                }
+                finally {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
+    public void onClickWin(View view){
+
+    }
+
 
 
     @Override
@@ -246,7 +345,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_QR) {
             if (resultCode == RESULT_OK) {
-                ExplorerDB.getInstance(this).getRuta(-1).ifPresent(this::initializeRoute);
+                try {
+                    ExplorerDB.getInstance(this).getRuta(-1).ifPresent(this::initializeRoute);
+                }catch (NullPointerException e){
+                    Log.e(TAG, "onActivityResult: ",e );
+                }
             }
         }
     }
@@ -257,7 +360,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(NAME_PREFERENCES,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_PREFERENCES_ID_RUTA,ruta.getId());
-        editor.commit();
+        editor.apply();
+
 
     }
 }

@@ -1,5 +1,6 @@
 package com.antonioalejandro.explorerapp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Ruta {
@@ -27,6 +28,7 @@ public class Ruta {
     }
 
     public Ruta() {
+        places = new ArrayList<>();
     }
 
     public String getTitle() {

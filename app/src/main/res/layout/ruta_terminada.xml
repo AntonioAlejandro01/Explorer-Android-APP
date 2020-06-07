@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@color/colorPrimary">
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Route Completed"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:layout_marginBottom="20sp"
+        android:layout_marginTop="10sp"
+        android:textColor="@color/white"
+        />
+    <ImageView
+        android:id="@+id/ivWin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_win"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvTitle"
+        />
+
+    <Button
+        android:id="@+id/btnFinish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Finish"
+        android:layout_below="@id/ivWin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20sp"
+        android:onClick="onClickWin"
+        android:background="@drawable/background_buttons"
+        android:textColor="@color/white"
+        />
+
+</RelativeLayout>

@@ -40,7 +40,7 @@ public class ExplorerDB extends SQLiteOpenHelper {
     }
 
     public Optional<Ruta> getRuta(int id){
-        Cursor cursor = db.rawQuery("SELECT _id,title,author,location,topic FROM Ruta" + ( id == -1 ? "order by _id DESC LIMIT 1": ("WHERE _id=" + id)),null);
+        Cursor cursor = db.rawQuery("SELECT _id,title,author,location,topic FROM Ruta " + ( id == -1 ? "order by _id DESC LIMIT 1": ("WHERE _id=" + id)),null);
         Ruta ruta = null;
         if (cursor.moveToFirst()){
             do {
@@ -142,6 +142,10 @@ public class ExplorerDB extends SQLiteOpenHelper {
 
     private void deletePlace(Ruta ruta) {
         db.execSQL("DELETE FROM Place WHERE ruta=" + ruta.getId() );
+    }
+
+    public void updatePlaceVisited(Place place){
+        db.execSQL("UPDATE Place SET visited = 1 WHERE _id = " + place.getId());
     }
 
 

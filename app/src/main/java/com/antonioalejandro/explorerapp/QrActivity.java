@@ -33,13 +33,6 @@ public class QrActivity extends AppCompatActivity implements ZXingScannerView.Re
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
         mScannerView.setFormats(Arrays.asList(BarcodeFormat.QR_CODE));
         setContentView(mScannerView);                // Set the scanner view as the content view
-        try {
-            ExplorerDB.getInstance(this).insertRuta(parseJsonToRuta("{\"title\":\"Prueba Para Android 2\",\"author\":\"Antonio\",\"location\":\"Valdemoro\",\"places\":{\"comments\":[\"Que funcione el test\"],\"nombres\":[\"Test1\"],\"latitudes\":[40.19166331953064],\"longitudes\":[-3.677509725093842]},\"topic\":\"Test\"}"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     @Override
@@ -61,7 +54,7 @@ public class QrActivity extends AppCompatActivity implements ZXingScannerView.Re
         Log.v("TAG", rawResult.getText()); // Prints scan results
         Log.v("TAG", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
         try {
-            ExplorerDB.getInstance(this).insertRuta(parseJsonToRuta("{\"title\":\"Prueba Para Android 2\",\"author\":\"Antonio\",\"location\":\"Valdemoro\",\"places\":{\"comments\":[\"Que funcione el test\"],\"nombres\":[\"Test1\"],\"latitudes\":[40.19166331953064],\"longitudes\":[-3.677509725093842]},\"topic\":\"Test\"}"));
+            ExplorerDB.getInstance(this).insertRuta(parseJsonToRuta(rawResult.getText()));
             this.setResult(RESULT_OK);
             this.finish();
         } catch (JSONException e) {
@@ -90,6 +83,4 @@ public class QrActivity extends AppCompatActivity implements ZXingScannerView.Re
         ruta.setPlaces(places);
         return ruta;
     }
-
-
 }
