@@ -1,8 +1,8 @@
-# ExpplorerApp
-Aplicación de Android
+# Explorer Android APP
 
-Repositorios del Proyecto
-- [Scripts de la Base de datos](https://github.com/AntonioAlejandro01/Explorer-DBScripts)
-- [Servidor en Node.js](https://github.com/AntonioAlejandro01/Explorer-API)
-- [Página web en Angular](https://github.com/AntonioAlejandro01/Explorer-Web)
-- [Aplicacion Android](https://github.com/AntonioAlejandro01/Explorer-Android-APP)
+Proyect repositories
+
+- [Database Scrips](https://github.com/AntonioAlejandro01/Explorer-DBScripts)
+- [Node.js API](https://github.com/AntonioAlejandro01/Explorer-API)
+- [Angular Web page](https://github.com/AntonioAlejandro01/explorer-web)
+- [Android APP](https://github.com/AntonioAlejandro01/Explorer-Android-APP)
